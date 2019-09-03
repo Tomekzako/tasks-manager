@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar color="success" dark>
+    <v-toolbar v-if="!user" color="primary" dark>
       <v-toolbar-title>
         <img src="@/assets/logo.png" alt="PTR Agencja Interaktywna" class="toolbar_logo mt-2" />
       </v-toolbar-title>
@@ -15,7 +15,7 @@
       </v-toolbar-items>
     </v-toolbar>
     <nav v-if="user">
-      <v-snackbar v-model="snackbar" :timeout="3000" top color="success">
+      <v-snackbar v-model="snackbar" :timeout="3000" top color="primary">
         <span>Awesome! You added a new project.</span>
         <v-btn text color="white" @click="snackbar = false">Close</v-btn>
       </v-snackbar>
@@ -23,10 +23,10 @@
         <v-app-bar-nav-icon class="grey--text" @click="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title class="text-uppercase">
           <span class="font-weight-light">Todo</span>
-          <span>Tomaszek</span>
+          <span>{{ currentUser }}</span>
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn text color="grey">
+        <v-btn text color="grey" @click="logout">
           <span>Sign Out</span>
           <v-icon right>mdi-exit-to-app</v-icon>
         </v-btn>
@@ -55,13 +55,16 @@
 
 <script>
 import AddProject from '@/components/AddProject'
+import db from '@/firebase/init'
+import firebase, { firestore } from 'firebase'
+
 export default {
   components: {
     AddProject
   },
   data() {
     return {
-      user: false,
+      user: null,
       drawer: false,
       items: [
         { icon: 'mdi-view-dashboard', text: 'Dashboard', route: '/' },
@@ -69,6 +72,30 @@ export default {
         { icon: 'mdi-account', text: 'Team', route: '/team' }
       ],
       snackbar: false
+    }
+  },
+  methods: {
+    logout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          this.$router.push({ name: 'Login' })
+        })
+    }
+  },
+  created() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        this.user = user
+      } else {
+        this.user = null
+      }
+    })
+  },
+  computed: {
+    currentUser() {
+      return this.$store.state.user
     }
   }
 }

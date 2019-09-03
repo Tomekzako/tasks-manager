@@ -5,27 +5,37 @@ import Team from './views/Team.vue'
 import Projects from './views/Projects.vue'
 import Signup from '@/components/auth/Signup.vue'
 import Login from '@/components/auth/Login.vue'
+import firebase from 'firebase'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
     {
       path: '/',
       name: 'Dashboard',
-      component: Dashboard
+      component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/projects',
       name: 'Projects',
-      component: Projects
+      component: Projects,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/team',
       name: 'Team',
-      component: Team
+      component: Team,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/signup',
@@ -39,3 +49,18 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(rec => rec.meta.requiresAuth)) {
+    let user = firebase.auth().currentUser
+    if (user) {
+      next()
+    } else {
+      next({ name: 'Login' })
+    }
+  } else {
+    next()
+  }
+})
+
+export default router

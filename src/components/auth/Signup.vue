@@ -2,7 +2,7 @@
   <v-row justify="center">
     <v-col cols="12" sm="10" md="8" lg="4">
       <v-card ref="form" class="mt-12 text-center">
-        <v-card-title class="justify-center display-2 font-weight-thin text-uppercase">Sign Up</v-card-title>
+        <v-card-title class="justify-center display-2 font-weight-light text-uppercase">Sign Up</v-card-title>
         <v-card-text>
           <v-text-field
             v-model="name"
@@ -23,7 +23,7 @@
             @click:append="showPassword = !showPassword"
           ></v-text-field>
         </v-card-text>
-        <v-btn class="ma-2 mb-10" tile color="success" @click="submit">Submit</v-btn>
+        <v-btn class="ma-2 mb-10" tile color="primary" @click="submit">Submit</v-btn>
       </v-card>
     </v-col>
   </v-row>
