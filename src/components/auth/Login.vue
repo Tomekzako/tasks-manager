@@ -9,7 +9,7 @@
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required, rules.min]"
             :type="showPassword ? 'text' : 'password'"
-            label="Not visible"
+            label="Password"
             hint="At least 8 characters"
             v-model="password"
             class="input-group--focused"
@@ -17,7 +17,7 @@
           ></v-text-field>
           <p class="red--text" v-if="feedback">{{ feedback }}</p>
         </v-card-text>
-        <v-btn class="ma-2 mb-10" tile color="primary" @click="login">Login</v-btn>
+        <v-btn class="ma-2 mb-10" tile color="primary" @click="login" :loading="loading">Login</v-btn>
       </v-card>
     </v-col>
   </v-row>
@@ -33,6 +33,7 @@ export default {
       email: '',
       showPassword: false,
       feedback: null,
+      loading: false,
       rules: {
         required: value => !!value || 'Required.',
         min: v => v.length >= 8 || 'Min 8 characters',
@@ -46,11 +47,13 @@ export default {
   methods: {
     login() {
       if (this.email && this.password) {
+        this.loading = true
         firebase
           .auth()
           .signInWithEmailAndPassword(this.email, this.password)
           .then(cred => {
             this.$router.push({ name: 'Dashboard' })
+            this.loading = false
           })
           .catch(err => {
             this.feedback = err.message

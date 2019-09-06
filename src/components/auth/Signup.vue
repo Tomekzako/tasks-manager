@@ -16,14 +16,16 @@
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required, rules.min]"
             :type="showPassword ? 'text' : 'password'"
-            label="Not visible"
+            label="Password"
             hint="At least 8 characters"
             v-model="password"
             class="input-group--focused"
             @click:append="showPassword = !showPassword"
           ></v-text-field>
+          <v-select :items="items" label="Position" :rules="[rules.required]" v-model="position"></v-select>
+          <p class="red--text" v-if="feedback">{{ feedback }}</p>
         </v-card-text>
-        <v-btn class="ma-2 mb-10" tile color="primary" @click="submit">Submit</v-btn>
+        <v-btn class="ma-2 mb-10" tile color="primary" @click="submit" :loading="loading">Submit</v-btn>
       </v-card>
     </v-col>
   </v-row>
@@ -39,8 +41,12 @@ export default {
       password: '',
       name: '',
       email: '',
+      position: '',
       showPassword: false,
+      feedback: null,
+      loading: false,
       slug: null,
+      items: ['Graphic Designer', 'Front-end Developer', 'Project Manager'],
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
@@ -54,6 +60,7 @@ export default {
   },
   methods: {
     submit() {
+      this.loading = true
       this.slug = slugify(this.name, {
         replacement: '-',
         remove: /[$*_+~.()'"!\-:@]/g,
@@ -67,17 +74,19 @@ export default {
             .doc(this.slug)
             .set({
               name: this.name,
+              position: this.position,
               user_id: cred.user.uid
             })
         })
         .then(() => {
+          this.loading = false
           this.$router.push({ name: 'Dashboard' })
         })
         .catch(error => {
           console.log(error)
-          //   this.feedback = error.message
+          this.feedback = error.message
         })
-      //   this.feedback = 'This alias is free to use'
+      this.feedback = 'This name is free to use'
     }
   }
 }

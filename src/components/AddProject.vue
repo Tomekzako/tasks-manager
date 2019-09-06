@@ -1,7 +1,12 @@
 <template>
   <v-dialog width="600" v-model="dialog">
-    <template v-slot:activator="{ on }">
-      <v-btn class="success" v-on="on">Add new project</v-btn>
+    <template v-if="plus" v-slot:activator="{ on }">
+      <v-btn class="mx-4" fab dark x-small color="primary" v-on="on">
+        <v-icon dark>mdi-plus</v-icon>
+      </v-btn>
+    </template>
+    <template v-else v-slot:activator="{ on }">
+      <v-btn class="success" v-on="on">Add a new project</v-btn>
     </template>
     <v-card>
       <v-card-title>Add a new Project</v-card-title>
@@ -43,7 +48,6 @@ export default {
     return {
       title: '',
       content: '',
-      dialog: false,
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       inputRules: [v => v.length >= 3 || 'Minimum length is 3 characters'],
@@ -51,9 +55,16 @@ export default {
       dialog: false
     }
   },
+  props: ['plus'],
   computed: {
     formattedDate() {
       return this.date ? moment(this.date).format('Do MMM YYYY') : ''
+    },
+    currentUser() {
+      return this.$store.getters.getUser
+    },
+    position() {
+      return this.$store.getters.getPosition
     }
   },
   methods: {
@@ -64,7 +75,8 @@ export default {
           title: this.title,
           content: this.content,
           due: moment(this.date).format('Do MMM YYYY'),
-          person: null,
+          person: this.currentUser,
+          position: this.position,
           status: 'ongoing'
         }
         db.collection('projects')
