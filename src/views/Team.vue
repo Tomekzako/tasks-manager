@@ -11,7 +11,7 @@
             ></v-img>
             <v-card-text>
               <div class="subheading">{{ person.name }}</div>
-              <div class="grey--text">{{ person.role }}</div>
+              <div class="grey--text">{{ person.position }}</div>
             </v-card-text>
           </v-card>
         </v-col>
@@ -21,17 +21,25 @@
 </template>
 
 <script>
+import db from '@/firebase/init'
 export default {
   data() {
     return {
-      team: [
-        { name: 'The Net Ninja', role: 'Web developer' },
-        { name: 'Ryu', role: 'Graphic designer' },
-        { name: 'Chun Li', role: 'Web developer' },
-        { name: 'Gouken', role: 'Social media maverick' },
-        { name: 'Yoshi', role: 'Sales guru' }
-      ]
+      team: []
     }
+  },
+  created() {
+    db.collection('users')
+      .get()
+      .then(res => {
+        const users = res.docs
+        users.forEach(user => {
+          this.team.push({
+            name: user.data().name,
+            position: user.data().position
+          })
+        })
+      })
   }
 }
 </script>

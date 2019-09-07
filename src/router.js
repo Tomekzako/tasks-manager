@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Dashboard from './views/Dashboard.vue'
 import Team from './views/Team.vue'
 import Projects from './views/Projects.vue'
+import Profile from './views/Profile.vue'
 import Signup from '@/components/auth/Signup.vue'
 import Login from '@/components/auth/Login.vue'
 import firebase from 'firebase'
@@ -33,6 +34,14 @@ const router = new Router({
       path: '/team',
       name: 'Team',
       component: Team,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
       meta: {
         requiresAuth: true
       }

@@ -63,8 +63,6 @@
 
 <script>
 import db from '@/firebase/init'
-import firebase, { firestore } from 'firebase'
-
 export default {
   data() {
     return {
@@ -99,19 +97,6 @@ export default {
         }
       })
     })
-  },
-  mounted() {
-    let user = firebase.auth().currentUser
-    console.log(user.uid)
-    db.collection('users')
-      .where('user_id', '==', user.uid)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          this.$store.commit('user', doc.data().name)
-          this.$store.commit('position', doc.data().position)
-        })
-      })
   }
 }
 </script>

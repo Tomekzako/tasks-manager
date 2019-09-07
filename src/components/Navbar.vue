@@ -27,13 +27,33 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <AddProject @projectAdded="snackbar = true" plus="true" />
+        <v-menu offset-y>
+          <template v-slot:activator="{ on }">
+            <v-btn text color="grey" v-on="on">
+              <v-icon left>mdi-chevron-down</v-icon>
+              <span>Menu</span>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(item, index) in items" :key="index" router :to="item.route">
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <v-btn text color="grey" @click="logout">
           <span>Log Out</span>
           <v-icon right>mdi-exit-to-app</v-icon>
         </v-btn>
       </v-app-bar>
+
       <v-navigation-drawer v-model="drawer" app class="primary">
         <v-row class="mt-4 mb-3">
+          <v-col class="text-center">
+            <v-avatar>
+              <img src="https://vuetifyjs.com/apple-touch-icon-180x180.png" alt="avatar" />
+            </v-avatar>
+            <p class="white--text subheading mt-2">{{ currentUser }}</p>
+          </v-col>
           <v-col class="text-center">
             <AddProject @projectAdded="snackbar = true" />
           </v-col>
@@ -70,7 +90,8 @@ export default {
       items: [
         { icon: 'mdi-view-dashboard', text: 'Dashboard', route: '/' },
         { icon: 'mdi-folder', text: 'My Projects', route: '/projects' },
-        { icon: 'mdi-account', text: 'Team', route: '/team' }
+        { icon: 'mdi-account-group', text: 'Team', route: '/team' },
+        { icon: 'mdi-account', text: 'My Profile', route: '/profile' }
       ],
       snackbar: false
     }

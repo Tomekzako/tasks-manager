@@ -1,23 +1,26 @@
 <template>
   <v-row justify="center">
     <v-col cols="12" sm="10" md="8" lg="4">
-      <v-card ref="form" class="mt-12 text-center">
+      <v-card class="mt-12 text-center">
         <v-card-title class="justify-center display-2 font-weight-light text-uppercase">Login</v-card-title>
         <v-card-text>
-          <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="E-mail"></v-text-field>
-          <v-text-field
-            :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rules.required, rules.min]"
-            :type="showPassword ? 'text' : 'password'"
-            label="Password"
-            hint="At least 8 characters"
-            v-model="password"
-            class="input-group--focused"
-            @click:append="showPassword = !showPassword"
-          ></v-text-field>
-          <p class="red--text" v-if="feedback">{{ feedback }}</p>
+          <v-form class="px-3" ref="form">
+            <v-text-field v-model="email" :rules="[rules.required, rules.email]" label="E-mail"></v-text-field>
+            <v-text-field
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="[rules.required, rules.min]"
+              :type="showPassword ? 'text' : 'password'"
+              label="Password"
+              hint="At least 8 characters"
+              v-model="password"
+              :autocomplete="password"
+              class="input-group--focused"
+              @click:append="showPassword = !showPassword"
+            ></v-text-field>
+            <v-btn class="ma-2 mb-10" tile color="primary" @click="login" :loading="loading">Login</v-btn>
+            <p v-if="feedback">{{feedback}}</p>
+          </v-form>
         </v-card-text>
-        <v-btn class="ma-2 mb-10" tile color="primary" @click="login" :loading="loading">Login</v-btn>
       </v-card>
     </v-col>
   </v-row>
@@ -46,7 +49,7 @@ export default {
   },
   methods: {
     login() {
-      if (this.email && this.password) {
+      if (this.$refs.form.validate()) {
         this.loading = true
         firebase
           .auth()
@@ -57,6 +60,7 @@ export default {
           })
           .catch(err => {
             this.feedback = err.message
+            this.loading = false
           })
         this.feedback = null
       } else {

@@ -8,15 +8,26 @@
 </template>
 
 <script>
-import Navbar from "@/components/Navbar";
+import Navbar from '@/components/Navbar'
+import firebase, { firestore } from 'firebase'
+import db from '@/firebase/init'
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Navbar
   },
-  data: () => ({
-    //
-  })
-};
+  mounted() {
+    let user = firebase.auth().currentUser
+    db.collection('users')
+      .where('user_id', '==', user.uid)
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(doc => {
+          this.$store.commit('user', doc.data().name)
+          this.$store.commit('position', doc.data().position)
+        })
+      })
+  }
+}
 </script>

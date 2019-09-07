@@ -1,7 +1,7 @@
 <template>
   <v-dialog width="600" v-model="dialog">
     <template v-if="plus" v-slot:activator="{ on }">
-      <v-btn class="mx-4" fab dark x-small color="primary" v-on="on">
+      <v-btn class="mx-4" fab dark x-small outlined color="grey" v-on="on">
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
     </template>
