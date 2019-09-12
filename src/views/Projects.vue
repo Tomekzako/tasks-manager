@@ -33,6 +33,9 @@
                       <v-text-field v-model="editedItem.title" label="Project name"></v-text-field>
                     </v-col>
                     <v-col cols="12">
+                      <v-text-field v-model="editedItem.content" label="Project description"></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
                       <v-text-field v-model="editedItem.due" label="Deadline"></v-text-field>
                     </v-col>
                     <v-col cols="12">
@@ -94,13 +97,13 @@ export default {
       ],
       editedItem: {
         title: '',
-        created: 0,
+        content: '',
         due: 0,
         status: 0
       },
       defaultItem: {
         title: '',
-        created: 0,
+        content: '',
         due: 0,
         status: 0
       }
@@ -116,6 +119,11 @@ export default {
             id: change.doc.id,
             created: moment(change.doc.data().timestamp).format('lll')
           })
+        } else if (change.type === 'modified') {
+          const findIndex = this.projects.findIndex(
+            project => project.id == change.doc.data().id
+          )
+          this.projects.splice(findIndex, 1, change.doc.data())
         }
       })
     })
@@ -161,20 +169,21 @@ export default {
 
     save() {
       console.log(this.editedItem)
-      this.close()
-      db.collection('projects')
-        .doc(this.editedItem.id)
-        .update({
-          content: this.editedItem.content,
-          due: this.editedItem.due,
-          person: this.editedItem.person,
-          position: this.editedItem.position,
-          status: this.editedItem.status,
-          title: this.editedItem.title
-        })
-        .then(ref => {
-          console.log('hehe')
-        })
+      // this.close()
+      // db.collection('projects')
+      //   .doc(this.editedItem.id)
+      //   .update({
+      //     content: this.editedItem.content,
+      //     due: this.editedItem.due,
+      //     person: this.editedItem.person,
+      //     position: this.editedItem.position,
+      //     status: this.editedItem.status,
+      //     title: this.editedItem.title,
+      //     id: this.editedItem.id
+      //   })
+      // .then(ref => {
+      // console.log('hehe')
+      // })
       // .then(() => {
       //   this.$store.commit('user', form.name)
       //   this.$store.commit('position', form.position)
