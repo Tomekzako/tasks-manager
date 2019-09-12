@@ -19,15 +19,17 @@ export default {
   },
   mounted() {
     let user = firebase.auth().currentUser
-    db.collection('users')
-      .where('user_id', '==', user.uid)
-      .get()
-      .then(snapshot => {
-        snapshot.forEach(doc => {
-          this.$store.commit('user', doc.data().name)
-          this.$store.commit('position', doc.data().position)
+    if (user) {
+      db.collection('users')
+        .where('user_id', '==', user.uid)
+        .get()
+        .then(snapshot => {
+          snapshot.forEach(doc => {
+            this.$store.commit('user', doc.data().name)
+            this.$store.commit('position', doc.data().position)
+          })
         })
-      })
+    }
   }
 }
 </script>

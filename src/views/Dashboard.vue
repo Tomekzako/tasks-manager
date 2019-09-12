@@ -85,6 +85,13 @@ export default {
       else return 'DEV'
     }
   },
+  computed: {
+    pages() {
+      return this.pagination.rowsPerPage
+        ? Math.ceil(this.projects.length / this.pagination.rowsPerPage)
+        : 0
+    }
+  },
   created() {
     db.collection('projects').onSnapshot(res => {
       const changes = res.docChanges()

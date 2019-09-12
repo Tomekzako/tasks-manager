@@ -71,13 +71,16 @@ export default {
     submit() {
       if (this.$refs.form.validate()) {
         this.loading = true
+        const newDate = Date.now()
         const project = {
           title: this.title,
           content: this.content,
+          created: newDate,
           due: moment(this.date).format('Do MMM YYYY'),
           person: this.currentUser,
           position: this.position,
-          status: 'ongoing'
+          status:
+            new Date(newDate) > new Date(this.date) ? 'overdue' : 'ongoing'
         }
         db.collection('projects')
           .add(project)

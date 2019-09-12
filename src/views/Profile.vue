@@ -12,7 +12,8 @@
           <v-form class="px-3" ref="form">
             <v-text-field
               label="Name"
-              v-model="name"
+              :value="currentUser"
+              @input="name = $event"
               prepend-icon="mdi-account-outline"
               :rules="[rules.required, rules.counter]"
               counter
@@ -29,11 +30,12 @@
               :items="items"
               label="Position"
               :rules="[rules.required]"
-              v-model="newPosition"
+              :value="position"
+              @input="newPosition = $event"
               prepend-icon="mdi-account-badge-outline"
             ></v-select>
             <v-spacer></v-spacer>
-            <v-btn color="success" text @click="submit">Save</v-btn>
+            <v-btn color="success" text @click="submit" :loading="loading">Save</v-btn>
             <v-btn color="error" text @click="dialog = false">Close</v-btn>
           </v-form>
         </v-card-text>
@@ -98,13 +100,15 @@ export default {
   data() {
     return {
       dialog: false,
+      loading: false,
       items: ['Graphic Designer', 'Front-end Developer', 'Project Manager'],
-      newPosition: '',
+      name: '',
       email: '',
+      newPosition: '',
+      userId: null,
       mobile: '000 000 000',
       avatar: null,
       image: 'https://vuetifyjs.com/apple-touch-icon-180x180.png',
-      name: '',
       rules: {
         required: value => !!value || 'Required.',
         counter: value => value.length <= 20 || 'Max 20 characters',
@@ -119,18 +123,40 @@ export default {
   methods: {
     submit() {
       if (this.$refs.form.validate()) {
+        this.loading = true
         const form = {
-          name: this.name,
-          position: this.position,
-          email: this.email,
-          avatar: this.avatar.name
+          name: this.name ? this.name : this.currentUser,
+          position: this.newPosition ? this.newPosition : this.position,
+          email: this.email
         }
-        console.log(form)
+        db.collection('users')
+          .where('user_id', '==', this.userId)
+          .get()
+          .then(snapshot => {
+            snapshot.forEach(doc => {
+              db.collection('users')
+                .doc(doc.id)
+                .update({
+                  name: form.name,
+                  position: form.position
+                })
+            })
+          })
+          .then(() => {
+            this.$store.commit('user', form.name)
+            this.$store.commit('position', form.position)
+            this.loading = false
+            this.dialog = false
+          })
+          .catch(e => {
+            console.log(e)
+          })
       }
     }
   },
   mounted() {
     let user = firebase.auth().currentUser
+    this.userId = user.uid
     this.email = user.email
   },
   computed: {
