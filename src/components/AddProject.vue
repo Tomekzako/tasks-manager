@@ -12,12 +12,17 @@
       <v-card-title>Add a new Project</v-card-title>
       <v-card-text>
         <v-form class="px-3" ref="form">
-          <v-text-field label="Title" v-model="title" prepend-icon="mdi-folder" :rules="inputRules"></v-text-field>
+          <v-text-field
+            label="Title"
+            v-model="title"
+            prepend-icon="mdi-folder"
+            :rules="[rules.required, rules.min]"
+          ></v-text-field>
           <v-textarea
             label="Information"
             v-model="content"
             prepend-icon="mdi-pencil"
-            :rules="inputRules"
+            :rules="[rules.required, rules.min]"
           ></v-textarea>
           <v-menu v-model="menu" :close-on-content-click="false" min-width="290px">
             <template v-slot:activator="{on}">
@@ -27,7 +32,7 @@
                 clearable
                 prepend-icon="mdi-calendar-month"
                 v-on="on"
-                :rules="inputRules"
+                :rules="[rules.required]"
               ></v-text-field>
             </template>
             <v-date-picker no-title v-model="date" @change="menu = false"></v-date-picker>
@@ -50,7 +55,10 @@ export default {
       content: '',
       date: new Date().toISOString().substr(0, 10),
       menu: false,
-      inputRules: [v => v.length >= 3 || 'Minimum length is 3 characters'],
+      rules: {
+        required: value => !!value || 'Required.',
+        min: v => v.length >= 8 || 'Min 8 characters'
+      },
       loading: false,
       dialog: false
     }
